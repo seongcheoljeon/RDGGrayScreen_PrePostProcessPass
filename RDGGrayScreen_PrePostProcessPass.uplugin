@@ -1,0 +1,23 @@
+﻿{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "RDGGrayScreen_PrePostProcessPass",
+	"Description": "Gray screen using RDG + SceneViewExtension (PrePostProcessPass_RenderThread)",
+	"Category": "Other",
+	"CreatedBy": "Seongcheol Jeon",
+	"CreatedByURL": "https://github.com/seongcheoljeon",
+	"DocsURL": "",
+	"MarketplaceURL": "",
+	"CanContainContent": false,
+	"IsBetaVersion": false,
+	"IsExperimentalVersion": false,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "RDGGrayScreen_PrePostProcessPass",
+			"Type": "Runtime",
+			"LoadingPhase": "PostConfigInit"
+		}
+	]
+}
