@@ -1,18 +1,32 @@
 ﻿// Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "RDGGrayScreen_PrePostProcessPass.h"
+#include "Interfaces/IPluginManager.h"
+#include "RDGGrayScreenLog.h"
+#include "Misc/Paths.h"
 
 #define LOCTEXT_NAMESPACE "FRDGGrayScreen_PrePostProcessPassModule"
 
+
 void FRDGGrayScreen_PrePostProcessPassModule::StartupModule()
 {
-	// This code will execute after your module is loaded into memory; the exact timing is specified in the .uplugin file per-module
+	TSharedPtr<IPlugin> plugin = IPluginManager::Get().FindPlugin(TEXT("RDGGrayScreen_PrePostProcessPass"));
+	if (plugin.IsValid())
+	{
+		FString plugin_shader_dir = FPaths::Combine(plugin->GetBaseDir(), TEXT("Shaders"));
+		AddShaderSourceDirectoryMapping(TEXT("/Plugin/RDGGrayScreen_PrePostProcessPass"), plugin_shader_dir);
+
+		UE_LOG(LogRDGGrayScreen, Log, TEXT("RDGGrayScreen_PrePostProcessPass plugin shader directory mapped: %s"), *plugin_shader_dir);
+	}
+	else
+	{
+		UE_LOG(LogRDGGrayScreen, Error, TEXT("Failed to find RDGGrayScreen_PrePostProcessPass plugin"));
+	}
 }
 
 void FRDGGrayScreen_PrePostProcessPassModule::ShutdownModule()
 {
-	// This function may be called during shutdown to clean up your module.  For modules that support dynamic reloading,
-	// we call this function before unloading the module.
+	UE_LOG(LogRDGGrayScreen, Log, TEXT("RDGGrayScreen_PrePostProcessPass plugin shutdown"));
 }
 
 #undef LOCTEXT_NAMESPACE

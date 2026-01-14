@@ -1,0 +1,54 @@
+#include "/Engine/Public/Platform.ush"
+#include "/Engine/Private/Common.ush"
+
+
+float GrayScreen;
+float GrayGamma;
+float2 InputTextureSize;
+
+Texture2D InputTexture;
+SamplerState InputSampler;
+
+RWTexture2D<float4> OutputTexture;
+
+
+float GetLuminance(float3 color)
+{
+    return dot(color, float3(0.299, 0.587, 0.114));
+}
+
+
+[numthreads(8, 8, 1)]
+void MainPS(uint3 thread_id : SV_DispatchThreadID)
+{
+    uint2 pixel_pos = thread_id.xy;
+    
+    // 전체 텍스처 범위 체크
+    if(pixel_pos.x >= InputTextureSize.x || pixel_pos.y >= InputTextureSize.y)
+    {
+        return;
+    }
+
+    // uv 계산
+    float2 uv = (float2(pixel_pos) + 0.5) / InputTextureSize;
+    
+    // 원본 색상 샘플링
+    float4 original_color = InputTexture.SampleLevel(InputSampler, uv, 0);
+    
+    // grayscale 변환
+    float luminance = GetLuminance(original_color.rgb);
+    float3 grayscale = (float3) luminance;
+
+    // shader permutation: GAMMA_ENABLED가 정의되었을 때만 gamma 연산
+#if GAMMA_ENABLED
+    float exposure = max(GrayGamma, 0.0);
+    float3 gray_result = grayscale * exposure;
+#else
+    float3 gray_result = grayscale;
+#endif
+
+    float3 final_color = lerp(original_color.rgb, gray_result, GrayScreen);
+    
+    OutputTexture[pixel_pos] = float4(final_color, original_color.a);
+}
+
