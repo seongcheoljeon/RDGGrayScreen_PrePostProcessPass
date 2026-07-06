@@ -1,4 +1,5 @@
 #include "RDGGrayScreenShaders.h"
+#include "ShaderCompilerCore.h"
 
 
 // shader 등록 (USF 파일과 연결)
